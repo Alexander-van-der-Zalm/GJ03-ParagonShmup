@@ -3,7 +3,7 @@ using System.Collections;
 using XboxCtrlrInput;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(DirectMovementPhysics),typeof(SpellController))]
+[RequireComponent(typeof(DirectMovementPhysics),typeof(SpellController),typeof(Stats))]
 public class PlayerController : MonoBehaviour 
 {
     public List<SpellBase> Spells;
@@ -11,12 +11,14 @@ public class PlayerController : MonoBehaviour
     private ControlScheme controlScheme;
     private DirectMovementPhysics movPhysics;
     private SpellController spellController;
+    private Stats stats;
 
 	// Use this for initialization
 	void Start () 
     {
         movPhysics = this.GetComponent<DirectMovementPhysics>();
         spellController = this.GetComponent<SpellController>();
+        stats = this.GetComponent<Stats>();
 
         controlScheme = ControlManager.GetControlScheme(1);
         //Spells = new List<ISpellBase>();

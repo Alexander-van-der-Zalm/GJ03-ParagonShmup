@@ -4,6 +4,7 @@ using System.Collections;
 public class SpellController : MonoBehaviour 
 {
     public Transform SpellOrb;
+    public Stats Stats;
 
     private float radius;
     private Transform tr;
@@ -38,7 +39,7 @@ public class SpellController : MonoBehaviour
 
     public void Launch(SpellBase spell, Transform caster, Action action)
     {
-        Debug.Log("Launch");
-        spell.Activate(SpellOrb, caster, action);
+        //Debug.Log("Launch");
+        spell.Activate(SpellOrb, caster,Stats, action);
     }
 }
