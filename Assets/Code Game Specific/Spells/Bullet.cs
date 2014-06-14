@@ -7,16 +7,25 @@ public class Bullet : ManagedObject
     public float Speed;
     public Vector3 Velocity;
 
-	// Use this for initialization
-	void Start () 
+    public float OutOfRangeMagnitude = 300;
+
+    private bool Initiate = false;
+
+    protected override void OnEnable()
     {
-	
-	}
-	
+        base.OnEnable();
+        
+    }
+
 	// Update is called once per frame
 	void FixedUpdate () 
     {
-	    this.transform.position += Velocity * Time.fixedDeltaTime;
+        if (Initiate)
+        {
+            Initiate = false;
+            StartCoroutine(DeactivateWhenOutOfRange());  
+        }
+        this.transform.position += Velocity * Time.fixedDeltaTime;
 	}
 
     public void Launch(Vector3 origin, Vector3 Direction, float damage = -1, float speed = -1)
@@ -27,12 +36,28 @@ public class Bullet : ManagedObject
             Speed = speed;
         
         Direction.y = 0;
-        Velocity = Direction * Speed;
+        Direction.Normalize();
 
         GameObject bullet = this.Create();
-        bullet.transform.position = origin;
-
         
+        Bullet bul = bullet.GetComponent<Bullet>();
+        bul.Velocity = Direction * Speed;
+        bul.transform.position = origin;
+        bul.Initiate = true;
+    }
+
+    private IEnumerator DeactivateWhenOutOfRange()
+    {
+        while ((transform.position - Camera.main.transform.position).magnitude < OutOfRangeMagnitude)
+        {
+            if(!gameObject.activeSelf)
+                yield break;
+
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        if (gameObject.activeSelf)
+            gameObject.SetActive(false);
     }
 
     //public 
