@@ -6,7 +6,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(DirectMovementPhysics),typeof(SpellController))]
 public class PlayerController : MonoBehaviour 
 {
-    public List<ISpellBase> Spells;
+    public List<SpellBase> Spells;
 
     private ControlScheme controlScheme;
     private DirectMovementPhysics movPhysics;

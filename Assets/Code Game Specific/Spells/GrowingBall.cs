@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GrowingBall : MonoBehaviour,ISpellBase
+public class GrowingBall : SpellBase
 {
     public float MinDamage, MaxDamage;
     public float StartupTime, ChargeTime, CooldownTime;
 
-    public Bullet Orb;
+    public Bullet Bullet;
 
-    private Action action;
-    private Transform spellOrb, caster;
+    private bool CanActivate = true;
 
     private IEnumerator ChargeCoroutine(Transform SpellOrb, Transform Caster, Action action)
     {
-        StartCoroutine(ChargeAnimationCoroutine());
+        //StartCoroutine(ChargeAnimationCoroutine());
+
+        CanActivate = false;
 
         float startTime = Time.realtimeSinceStartup;
 
@@ -31,21 +32,35 @@ public class GrowingBall : MonoBehaviour,ISpellBase
 
         float charge = Mathf.Min(1.0f,(dt-ChargeTime+startTime)/ChargeTime);
 
-        Orb.Launch(spellOrb.position, spellOrb.position - Caster.position, Mathf.Lerp(MinDamage, MaxDamage, charge));
+        Debug.Log(SpellOrb.position + " " + Caster.position);
+
+        Vector3 dir = SpellOrb.position - Caster.position;
+        dir.Normalize();
+        Debug.Log(SpellOrb.position + " 0 " + Caster.position + " " + dir);
+
+        Bullet.Launch(SpellOrb.position, dir, Mathf.Lerp(MinDamage, MaxDamage, charge));
+
+        Debug.Log(SpellOrb.position +  " 1 " + Caster.position+ " " + dir);
+
+        yield return new WaitForSeconds(CooldownTime);
+
+        Debug.Log("Cd passed");
+
+        CanActivate = true;
     }
 
-    private string ChargeAnimationCoroutine()
+    private IEnumerator ChargeAnimationCoroutine()
     {
-        throw new System.NotImplementedException();
+        return null;
+        //throw new System.NotImplementedException();
     }
 
 
     
 
-    public void Activate(Transform SpellOrb, Transform Caster, Action action)
+    public override void Activate(Transform SpellOrb, Transform Caster, Action action)
     {
-        this.action = action;
-
-        StartCoroutine(ChargeCoroutine(spellOrb,Caster,action));
+        if(CanActivate)
+            StartCoroutine(ChargeCoroutine(SpellOrb, Caster, action));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public interface ISpellBase 
+public abstract class SpellBase:MonoBehaviour 
 {
-    void Activate(Transform SpellOrb, Transform Caster, Action action);
+    public abstract void Activate(Transform SpellOrb, Transform Caster, Action action);
 }

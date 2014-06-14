@@ -36,9 +36,9 @@ public class SpellController : MonoBehaviour
         newDir.y = 0;
     }
 
-    public void Launch(ISpellBase spell, Transform caster, Action action)
+    public void Launch(SpellBase spell, Transform caster, Action action)
     {
         Debug.Log("Launch");
-        spell.Activate(tr, caster, action);
+        spell.Activate(SpellOrb, caster, action);
     }
 }
