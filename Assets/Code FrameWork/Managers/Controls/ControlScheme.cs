@@ -100,7 +100,7 @@ public class ControlScheme// : MonoBehaviour
     {
         foreach (Action action in Actions)
         {
-            action.Update();
+            action.Update(this);
         }
     }
 }

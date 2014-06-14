@@ -26,6 +26,7 @@ public class Action : Control
     private bool IsCKDown(ControlKey key)
     {
         bool down = false;
+        
         switch (key.Type)
         {
             case ControlKeyType.PC:
@@ -33,7 +34,12 @@ public class Action : Control
                     return true;
                 break;
             case ControlKeyType.Xbox:
-                if (XCI.GetButton(ControlHelper.ReturnXboxButton(key.KeyValue), scheme.controllerID))
+                if (scheme == null)
+                {
+                    if (XCI.GetButton(ControlHelper.ReturnXboxButton(key.KeyValue)))
+                        return true;
+                }
+                else if (XCI.GetButton(ControlHelper.ReturnXboxButton(key.KeyValue), scheme.controllerID))
                     return true;
                 break;
             default:
@@ -67,14 +73,17 @@ public class Action : Control
         return false;
     }
 
-    public void Update()
+    public void Update(ControlScheme inputScheme = null)
     {
+        if (scheme == null && inputScheme != null)
+            scheme = inputScheme;
+
         foreach (ControlKey key in Keys)
         {
             key.LastState   = key.CurState;
             key.CurState    = IsCKDown(key);
             
-            if(key.LastState)
+            if(key.LastState && scheme != null)
                 scheme.InputType = key.Type;
         }
     }
