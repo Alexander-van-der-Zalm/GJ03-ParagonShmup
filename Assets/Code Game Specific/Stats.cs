@@ -93,7 +93,7 @@ public class Stats : MonoBehaviour
 
     public float ConsumeEnergy(float energyCost)
     {
-        Debug.Log(energyCost);
+        //Debug.Log(energyCost);
         float defecit = 0;
         Energy -= energyCost;
 

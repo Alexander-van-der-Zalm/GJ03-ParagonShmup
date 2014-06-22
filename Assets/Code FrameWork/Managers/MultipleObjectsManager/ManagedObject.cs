@@ -11,7 +11,7 @@ public class ManagedObject : MonoBehaviour
 {
     [HideInInspector, SerializeField]
     private MultipleObjectsManager manager;
-    [HideInInspector,SerializeField]
+    [HideInInspector, SerializeField]
     private int ID;
 
     protected virtual void OnEnable()
@@ -72,7 +72,7 @@ public class ManagedObject : MonoBehaviour
     /// <summary>
     /// Use this instead of destroy
     /// </summary>
-    protected void Deactivate()
+    private void Deactivate()
     {
         if (manager == null)
         {

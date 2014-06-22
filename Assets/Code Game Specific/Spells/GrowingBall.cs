@@ -1,62 +1,143 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+
+[RequireComponent(typeof(GrowingOrbAnimation))]
 public class GrowingBall : SpellBase
 {
+    #region Classes
+
+    [HideInInspector]
+    //[System.Serializable]
+    public class AnimationInfo
+    {
+        public enum AnimState
+        {
+            Starting, Overcharging, Cooldown
+        }
+        public AnimState State;
+        public float AnimStateProgress;
+
+        public bool Activated = false;
+        public bool InputReleased = false;
+        public bool NegativeEnergyCast = false;
+    }
+
+    #endregion
+
+    #region Fields
+
     public float MinDamage, MaxDamage;
     public float StartupTime, ChargeTime, CooldownTime;
+    public float minSize, maxSize;
     public float ActivationCost, FullChargeCost;
-
+    public AnimationInfo AnimInfo =  new AnimationInfo();
     public Bullet Bullet;
 
-    private bool CanActivate = true;
+    private GrowingOrbAnimation animation;
+    private float coolDownStarted = 0;
+
+    #endregion
+
+    void Start()
+    {
+        animation = GetComponent<GrowingOrbAnimation>();
+    }
 
     private IEnumerator ChargeCoroutine(Transform SpellOrb, Transform Caster, Stats casterStats, Action action)
     {
-        //StartCoroutine(ChargeAnimationCoroutine());
-
-        CanActivate = false;
         float startTime = Time.realtimeSinceStartup;
+        AnimInfo.Activated = true;
+        animation.StartSpell(SpellOrb);
+        StartCoroutine(ChargeAnimationInfoCoroutine(startTime));
+
+        // If not enough energy for the full cast
         float negativeEnergy = casterStats.ConsumeEnergy(ActivationCost);
+        if (negativeEnergy > 0)
+            AnimInfo.NegativeEnergyCast = true;
+
+        float dt = 0;
+        float charge = 0;
 
         // Wait till button is released
-        while (action.IsDown() || negativeEnergy > 0)
-            yield return null;
+        while (action.IsDown() || AnimInfo.NegativeEnergyCast)
+        {
+            dt = Time.realtimeSinceStartup - startTime;
 
-        float dt = Time.realtimeSinceStartup - startTime;
+            if (dt > StartupTime)
+                AnimInfo.State = AnimationInfo.AnimState.Overcharging;
+
+            yield return null;
+        }
+
+        AnimInfo.InputReleased = true;
+        dt = Time.realtimeSinceStartup - startTime;
 
         // Wait atleast till startupTime
         if (dt < StartupTime)
             yield return new WaitForSeconds(StartupTime - dt);
 
         // Dt and charge calculation
-        dt = Time.realtimeSinceStartup - startTime;
-        float charge = Mathf.Max(0,Mathf.Min(1.0f,(dt-ChargeTime)/ChargeTime));
+        charge = AnimInfo.AnimStateProgress;
 
         // Gather Direction
         Vector3 dir = SpellOrb.position - Caster.position;
         dir.Normalize();
 
         // Consume energy and launch
-        Debug.Log(charge + "  " + (dt - ChargeTime) / ChargeTime);
         casterStats.ConsumeEnergy(FullChargeCost * charge);
         Bullet.Launch(SpellOrb.position, dir, Mathf.Lerp(MinDamage, MaxDamage, charge));
+
+        AnimInfo.State = AnimationInfo.AnimState.Cooldown;
+        coolDownStarted = Time.realtimeSinceStartup;
 
         // Replace by Cooldown Animation Handler
         yield return new WaitForSeconds(CooldownTime);
 
-        CanActivate = true;
+        resetAnimationInfo();
     }
 
-    private IEnumerator ChargeAnimationCoroutine()
+    private IEnumerator ChargeAnimationInfoCoroutine(float startTime)
     {
-        return null;
-        //throw new System.NotImplementedException();
+        float dt = 0;
+
+        while (AnimInfo.Activated)
+        {
+            dt = Time.realtimeSinceStartup - startTime;
+
+            switch (AnimInfo.State)
+            {
+                case AnimationInfo.AnimState.Starting:
+                    AnimInfo.AnimStateProgress = Mathf.Max(0, Mathf.Min(1.0f, dt / StartupTime));
+                    break;
+                
+                case AnimationInfo.AnimState.Cooldown:
+                    AnimInfo.AnimStateProgress = Mathf.Max(0, Mathf.Min(1.0f, (Time.realtimeSinceStartup - coolDownStarted) / CooldownTime));
+                    break;
+
+                case AnimationInfo.AnimState.Overcharging:
+                    AnimInfo.AnimStateProgress = Mathf.Max(0, Mathf.Min(1.0f, (dt - StartupTime) / ChargeTime));
+                    break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private void resetAnimationInfo()
+    {
+        AnimInfo.State              = AnimationInfo.AnimState.Starting;
+        AnimInfo.AnimStateProgress  = 0;
+
+        AnimInfo.Activated          = false;
+        AnimInfo.InputReleased      = false;
+        AnimInfo.NegativeEnergyCast = false;
     }
 
     public override void Activate(Transform SpellOrb, Transform Caster, Stats casterStats, Action action)
     {
-        if(CanActivate&&casterStats.Energy>0)
+        if(!AnimInfo.Activated && casterStats.Energy > 0)
             StartCoroutine(ChargeCoroutine(SpellOrb, Caster, casterStats, action));
     }
 }

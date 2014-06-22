@@ -14,7 +14,6 @@ public class Bullet : ManagedObject
     protected override void OnEnable()
     {
         base.OnEnable();
-        
     }
 
 	// Update is called once per frame
@@ -59,6 +58,4 @@ public class Bullet : ManagedObject
         if (gameObject.activeSelf)
             gameObject.SetActive(false);
     }
-
-    //public 
 }
