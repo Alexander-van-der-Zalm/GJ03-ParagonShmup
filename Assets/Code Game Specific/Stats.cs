@@ -11,6 +11,8 @@ public class Stats : MonoBehaviour
     public float EnergyMax;
     public float EnergyRegenPerSecond;
     public float EnergyEmptyCooldown;
+
+    public bool EnergyOverdrawn { get { return EnergyCooldown; } }
     private bool EnergyCooldown;
 
     public float Shield, Hull, Energy;

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 
-[RequireComponent(typeof(GrowingOrbAnimation))]
 public class GrowingBall : SpellBase
 {
     #region Classes
@@ -35,21 +35,28 @@ public class GrowingBall : SpellBase
     public AnimationInfo AnimInfo =  new AnimationInfo();
     public Bullet Bullet;
 
-    private GrowingOrbAnimation animation;
+    public List<SpellFX> OnActivateFX;
     private float coolDownStarted = 0;
 
     #endregion
 
     void Start()
     {
-        animation = GetComponent<GrowingOrbAnimation>();
+        //animation = GetComponent<GrowingOrbAnimation>();
     }
 
     private IEnumerator ChargeCoroutine(Transform SpellOrb, Transform Caster, Stats casterStats, Action action)
     {
         float startTime = Time.realtimeSinceStartup;
         AnimInfo.Activated = true;
-        animation.StartSpell(SpellOrb);
+
+        SpellFX newFx = OnActivateFX[0].StartSpell(SpellOrb);
+        GrowingOrbAnimation goa = newFx.GetComponent<GrowingOrbAnimation>();
+        goa.GrowingBallParent = this;
+
+        //foreach(SpellFX fx in OnActivateFX)
+        //    fx.StartSpell(SpellOrb);
+
         StartCoroutine(ChargeAnimationInfoCoroutine(startTime));
 
         // If not enough energy for the full cast
@@ -79,7 +86,8 @@ public class GrowingBall : SpellBase
             yield return new WaitForSeconds(StartupTime - dt);
 
         // Dt and charge calculation
-        charge = AnimInfo.AnimStateProgress;
+        if (AnimInfo.State == AnimationInfo.AnimState.Overcharging)
+            charge = AnimInfo.AnimStateProgress;
 
         // Gather Direction
         Vector3 dir = SpellOrb.position - Caster.position;
@@ -87,7 +95,11 @@ public class GrowingBall : SpellBase
 
         // Consume energy and launch
         casterStats.ConsumeEnergy(FullChargeCost * charge);
-        Bullet.Launch(SpellOrb.position, dir, Mathf.Lerp(MinDamage, MaxDamage, charge));
+        Bullet bullet = Bullet.Launch(SpellOrb.position, dir, Mathf.Lerp(MinDamage, MaxDamage, charge));
+
+        Debug.Log(charge);
+        float scale = minSize + (maxSize-minSize)*charge;
+        bullet.transform.localScale = new Vector3(scale, scale, scale);
 
         AnimInfo.State = AnimationInfo.AnimState.Cooldown;
         coolDownStarted = Time.realtimeSinceStartup;

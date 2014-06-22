@@ -27,7 +27,7 @@ public class Bullet : ManagedObject
         this.transform.position += Velocity * Time.fixedDeltaTime;
 	}
 
-    public void Launch(Vector3 origin, Vector3 Direction, float damage = -1, float speed = -1)
+    public Bullet Launch(Vector3 origin, Vector3 Direction, float damage = -1, float speed = -1)
     {
         if (damage >= 0)
             Damage = damage;
@@ -43,6 +43,8 @@ public class Bullet : ManagedObject
         bul.Velocity = Direction * Speed;
         bul.transform.position = origin;
         bul.Initiate = true;
+
+        return bul;
     }
 
     private IEnumerator DeactivateWhenOutOfRange()

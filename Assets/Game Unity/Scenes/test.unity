@@ -274,6 +274,44 @@ Transform:
   - {fileID: 639747936}
   - {fileID: 642566340}
   m_Father: {fileID: 637341612}
+--- !u!1 &245819088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 245819090}
+  - 114: {fileID: 245819089}
+  m_Layer: 0
+  m_Name: SpellFX Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &245819089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 245819088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70cce87e325e2ac449a6ba183baea445, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &245819090
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 245819088}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 498935719}
 --- !u!1 &333754671
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,6 +378,7 @@ GameObject:
   - 4: {fileID: 385186959}
   - 33: {fileID: 385186962}
   - 23: {fileID: 385186960}
+  - 114: {fileID: 385186961}
   m_Layer: 0
   m_Name: SpellOrb
   m_TagString: Untagged
@@ -383,6 +422,21 @@ Renderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortingLayerID: 0
+--- !u!114 &385186961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 385186958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eed465488b74e24789671ab65d27e23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerShipStats: {fileID: 637341617}
+  FullEnergyColor: {r: .0758622885, g: 1, b: 0, a: 1}
+  LowEnergyColor: {r: .406896591, g: 0, b: 1, a: 1}
+  OverdrawnfEnergyColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!33 &385186962
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -490,6 +544,45 @@ Prefab:
   m_RootGameObject: {fileID: 832662738}
   m_IsPrefabParent: 0
   m_IsExploded: 1
+--- !u!1 &498935718
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 498935719}
+  - 114: {fileID: 498935720}
+  m_Layer: 0
+  m_Name: ManagedObjects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &498935719
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 498935718}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 245819090}
+  m_Father: {fileID: 0}
+--- !u!114 &498935720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 498935718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 921ee48b9156f8240bd534c67dc0c667, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &501301804
 GameObject:
   m_ObjectHideFlags: 0
@@ -696,7 +789,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 567416159}
   - 114: {fileID: 567416155}
-  - 114: {fileID: 567416160}
   m_Layer: 0
   m_Name: Spell_GrowingOrb
   m_TagString: Untagged
@@ -720,11 +812,13 @@ MonoBehaviour:
   StartupTime: .349999994
   ChargeTime: .5
   CooldownTime: .200000003
-  minSize: 0
-  maxSize: 0
+  minSize: 1
+  maxSize: 5
   ActivationCost: 5
   FullChargeCost: 5
   Bullet: {fileID: 504755982}
+  OnActivateFX:
+  - {fileID: 833586586}
 --- !u!4 &567416159
 Transform:
   m_ObjectHideFlags: 0
@@ -736,27 +830,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1990527893}
---- !u!114 &567416160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 567416154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0a3398262259ae43ba8030a1c72f106, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StartScale: 3
-  MinScale: 5
-  MaxScale: 7
-  fXScale: 0
-  NormalRotationPSec: 360
-  OverchargeRotationPsec: 540
-  CoolDownRotationPSec: 270
-  GrowingOrbCastObject: {fileID: 833586584}
-  castColor: {r: .046550598, g: .0524668321, b: .904411793, a: 1}
-  cdColor: {r: .941176474, g: 0, b: 0, a: 0}
 --- !u!1 &584387529
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,7 +1001,7 @@ MonoBehaviour:
   ShieldPerDodge: 10
   HullMax: 30
   EnergyMax: 30
-  EnergyRegenPerSecond: 2
+  EnergyRegenPerSecond: 5
   EnergyEmptyCooldown: 2
   Shield: 0
   Hull: 0
@@ -1229,6 +1302,7 @@ GameObject:
   - 4: {fileID: 833586588}
   - 33: {fileID: 833586587}
   - 23: {fileID: 833586585}
+  - 114: {fileID: 833586589}
   - 114: {fileID: 833586586}
   m_Layer: 0
   m_Name: GrowingOrbSpellFX
@@ -1236,7 +1310,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &833586585
 Renderer:
   m_ObjectHideFlags: 0
@@ -1266,11 +1340,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 833586584}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4295b309268d27d48bb9a4f5f0f480ae, type: 3}
+  m_Script: {fileID: 11500000, guid: dd9ac86c54463ca44899af6480d9870f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
   ID: 0
+  CenterOnSpellOrb: 1
+  SpellStart: 0
 --- !u!33 &833586587
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1289,6 +1365,25 @@ Transform:
   m_LocalScale: {x: 3.45067811, y: 3.45067811, z: 3.45067811}
   m_Children: []
   m_Father: {fileID: 1990527893}
+--- !u!114 &833586589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 833586584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a3398262259ae43ba8030a1c72f106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StartScale: 3
+  MinScale: 6
+  MaxScale: 8
+  NormalRotationPSec: 360
+  OverchargeRotationPsec: 540
+  CoolDownRotationPSec: 180
+  castColor: {r: .20073548, g: .0836397111, b: .669117689, a: 1}
+  cdColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &865615950
 GameObject:
   m_ObjectHideFlags: 0
