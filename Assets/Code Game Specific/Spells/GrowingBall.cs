@@ -49,6 +49,7 @@ public class GrowingBall : SpellBase
     {
         float startTime = Time.realtimeSinceStartup;
         AnimInfo.Activated = true;
+        casterStats.EnergyRegenPause = true;
 
         SpellFX newFx = OnActivateFX[0].StartSpell(SpellOrb);
         GrowingOrbAnimation goa = newFx.GetComponent<GrowingOrbAnimation>();
@@ -73,7 +74,10 @@ public class GrowingBall : SpellBase
             dt = Time.realtimeSinceStartup - startTime;
 
             if (dt > StartupTime)
+            {
                 AnimInfo.State = AnimationInfo.AnimState.Overcharging;
+                // reduce energy
+            }
 
             yield return null;
         }
@@ -97,16 +101,17 @@ public class GrowingBall : SpellBase
         casterStats.ConsumeEnergy(FullChargeCost * charge);
         Bullet bullet = Bullet.Launch(SpellOrb.position, dir, Mathf.Lerp(MinDamage, MaxDamage, charge));
 
-        Debug.Log(charge);
         float scale = minSize + (maxSize-minSize)*charge;
         bullet.transform.localScale = new Vector3(scale, scale, scale);
 
         AnimInfo.State = AnimationInfo.AnimState.Cooldown;
         coolDownStarted = Time.realtimeSinceStartup;
 
+        casterStats.EnergyRegenPause = false;
+
         // Replace by Cooldown Animation Handler
         yield return new WaitForSeconds(CooldownTime);
-
+        
         resetAnimationInfo();
     }
 

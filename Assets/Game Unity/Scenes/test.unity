@@ -874,7 +874,7 @@ GameObject:
   - 114: {fileID: 637341616}
   - 114: {fileID: 637341617}
   m_Layer: 0
-  m_Name: Ship
+  m_Name: Player - Ship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1003,6 +1003,7 @@ MonoBehaviour:
   EnergyMax: 30
   EnergyRegenPerSecond: 5
   EnergyEmptyCooldown: 2
+  EnergyRegenPause: 0
   Shield: 0
   Hull: 0
   Energy: 0

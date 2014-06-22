@@ -12,6 +12,7 @@ public class Stats : MonoBehaviour
     public float EnergyRegenPerSecond;
     public float EnergyEmptyCooldown;
 
+    public bool EnergyRegenPause = false;
     public bool EnergyOverdrawn { get { return EnergyCooldown; } }
     private bool EnergyCooldown;
 
@@ -29,12 +30,11 @@ public class Stats : MonoBehaviour
 	void Update () 
     {
         maintainEnergy();
-        
 	}
 
     private void maintainEnergy()
     {
-        if (EnergyCooldown)
+        if (EnergyCooldown || EnergyRegenPause)
             return;
 
         Energy = Mathf.Min(EnergyMax, Energy + EnergyRegenPerSecond * Time.deltaTime);
